@@ -159,7 +159,7 @@ export function ScaleFace({ value, unit = 'g', label, onTap, size = 'lg', bandCo
   const diameter = big ? 140 : 92;
   const hasValue = value != null && value !== '';
 
-  // Hash Lab — rectangular recessed LCD readout (matches the v5 concept)
+  // Hashashin — rectangular recessed LCD readout (matches the v5 concept)
   if (t.hl) {
     return (
       <div onClick={onTap} className="mi-tap" style={{
@@ -578,7 +578,7 @@ export function injectGlobalCSS() {
       .mi-enter, .mi-stagger > * { animation: none !important; }
     }
 
-    /* Square-corner mode (Hash Lab themes) — overrides inline border-radius.
+    /* Square-corner mode (Hashashin themes) — overrides inline border-radius.
        Element-scoped (cheap) so style recalc stays fast; SVG shapes untouched. */
     .hl-square div, .hl-square button, .hl-square input, .hl-square textarea,
     .hl-square span, .hl-square a, .hl-square img, .hl-square label,

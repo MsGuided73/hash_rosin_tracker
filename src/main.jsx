@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { MicronTokens } from './lib/tokens.js';
+import { MicronTokens, normalizeTheme } from './lib/tokens.js';
 import { IOSDevice } from './components/IOSFrame.jsx';
 import { MicronApp } from './App.jsx';
 import './styles/stage.css';
@@ -9,18 +9,18 @@ import './styles/stage.css';
 // Polls localStorage so theme changes from the in-app Tweaks panel propagate
 // to the frame chrome (mirrors the original prototype Shell behavior).
 function Shell() {
-  const [theme, setTheme] = React.useState(localStorage.getItem('micron-theme') || 'hashlab');
+  const [theme, setTheme] = React.useState(normalizeTheme(localStorage.getItem('micron-theme') || 'hashashin'));
   React.useEffect(() => {
     const i = setInterval(() => {
-      const t = localStorage.getItem('micron-theme') || 'hashlab';
+      const t = normalizeTheme(localStorage.getItem('micron-theme') || 'hashashin');
       if (t !== theme) setTheme(t);
     }, 200);
     return () => clearInterval(i);
   }, [theme]);
-  const dark = !(theme === 'light' || theme === 'hashlab-light');
-  const squareClass = theme === 'hashlab' || theme === 'hashlab-light' ? 'hl-square' : '';
+  const dark = !(theme === 'light' || theme === 'hashashin-light');
+  const squareClass = theme === 'hashashin' || theme === 'hashashin-light' ? 'hl-square' : '';
   return (
-    <div data-screen-label="Micron prototype" style={{ position: 'relative' }}>
+    <div data-screen-label="Hashashin prototype" style={{ position: 'relative' }}>
       <IOSDevice dark={dark} width={402} height={874}>
         <div
           className={squareClass}

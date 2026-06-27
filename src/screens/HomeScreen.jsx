@@ -28,7 +28,7 @@ export function HomeScreen({ batches, onOpen, onCreate, unit, theme }) {
           <div style={{ ...{ fontFamily: t.fontMono, fontSize: 10, color: t.textDim, letterSpacing: 2 }, color: "rgba(248, 124, 13, 0.87)" }}>
             ICE WATER HASH · SOLVENTLESS
           </div>
-          <div style={{ fontFamily: t.fontSans, fontSize: 32, fontWeight: 700, letterSpacing: -1, marginTop: 4 }}>HASH LAB
+          <div style={{ fontFamily: t.fontSans, fontSize: 32, fontWeight: 700, letterSpacing: -1, marginTop: 4 }}>Hashashin
 
           </div>
         </div>

@@ -220,7 +220,7 @@ export function DateField({ label, value, onChange, theme }) {
           borderRadius: 12, padding: '12px 14px',
           fontFamily: t.fontSans, fontSize: 15, color: t.text,
           outline: 'none', width: '100%', boxSizing: 'border-box',
-          colorScheme: (t.name === 'light' || t.name === 'hashlab-light') ? 'light' : 'dark',
+          colorScheme: (t.name === 'light' || t.name === 'hashashin-light') ? 'light' : 'dark',
         }}/>
     </label>
   );

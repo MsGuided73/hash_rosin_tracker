@@ -1,6 +1,6 @@
 // App root — routing + state
 import React from 'react';
-import { MicronTokens, MicronBands } from './lib/tokens.js';
+import { MicronTokens, MicronBands, normalizeTheme } from './lib/tokens.js';
 import { MicronSeed } from './lib/data.js';
 import { injectGlobalCSS, Sheet, Btn, Segmented } from './components/primitives.jsx';
 import { HomeScreen } from './screens/HomeScreen.jsx';
@@ -14,7 +14,7 @@ const { useState: useStateA, useEffect: useEffectA, useMemo: useMemoA } = React;
 
 export function MicronApp() {
   injectGlobalCSS();
-  const [theme, setTheme] = useStateA(() => localStorage.getItem('micron-theme') || 'hashlab');
+  const [theme, setTheme] = useStateA(() => normalizeTheme(localStorage.getItem('micron-theme') || 'hashashin'));
   const [unit, setUnit]   = useStateA(() => localStorage.getItem('micron-unit')  || 'g');
   const [tempUnit, setTempUnit] = useStateA(() => localStorage.getItem('micron-tempUnit') || 'F');
   const [route, setRoute] = useStateA(() => {
@@ -163,8 +163,8 @@ function TweaksPanel({ open, onClose, theme, setTheme, unit, setUnit, tempUnit, 
           <div style={{ fontFamily: t.fontMono, fontSize: 10, color: t.textDim, letterSpacing: 1.5, marginBottom: 10 }}>THEME</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {[
-              { value: 'hashlab',       label: 'Hash Lab',   sub: 'Terminal · dark' },
-              { value: 'hashlab-light', label: 'Hash Lab Lt', sub: 'Terminal · light' },
+              { value: 'hashashin',       label: 'Hashashin',    sub: 'Terminal · dark' },
+              { value: 'hashashin-light', label: 'Hashashin Lt', sub: 'Terminal · light' },
               { value: 'dark',          label: 'Gunmetal',   sub: 'Steel · cool' },
               { value: 'light',         label: 'Paper',      sub: 'Light · warm' },
             ].map(o => {
@@ -198,7 +198,7 @@ function TweaksPanel({ open, onClose, theme, setTheme, unit, setUnit, tempUnit, 
           background: t.bgElevated2,
           fontFamily: t.fontSans, fontSize: 13, color: t.textMuted, lineHeight: 1.45,
         }}>
-          Micron is a working draft. Data is stored locally in your browser — export or reset
+          Hashashin is a working draft. Data is stored locally in your browser — export or reset
           anytime. In production this would sync via the installed PWA.
         </div>
         <Btn kind="danger" fullWidth style={{ marginTop: 14 }} onClick={onReset}>

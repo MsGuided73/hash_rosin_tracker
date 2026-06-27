@@ -101,15 +101,15 @@ export const MicronTokens = {
     ],
   },
 
-  // Hash Lab — gritty industrial terminal. Share Tech Mono, terracotta on brushed
+  // Hashashin — gritty industrial terminal. Share Tech Mono, terracotta on brushed
   // olive metal, recessed LCD readouts. A self-contained look (own fonts).
-  hashlab: {
-    name: 'hashlab',
+  hashashin: {
+    name: 'hashashin',
     hl: true,
     fontSans: '"Spline Sans Mono", ui-monospace, monospace',
     fontMono: '"Spline Sans Mono", ui-monospace, monospace',
     fontLcd:  '"Share Tech Mono", ui-monospace, monospace',
-    // Page = near-black with a faint cool-green cast (matches the Hash Lab ref).
+    // Page = near-black with a faint cool-green cast (matches the Hashashin ref).
     bg:           '#0C0E0C',
     bgGradient:   'radial-gradient(ellipse 130% 90% at 50% 0%, #15191500 0%, #0C0E0C 55%, #070806 100%), linear-gradient(180deg, #101310 0%, #0A0B09 100%)',
     // Cards = brushed olive metal: the texture lives HERE, not on the page.
@@ -156,9 +156,9 @@ export const MicronTokens = {
     ],
   },
 
-  // Hash Lab (light) — same industrial terminal, brushed PALE steel + paper.
-  'hashlab-light': {
-    name: 'hashlab-light',
+  // Hashashin (light) — same industrial terminal, brushed PALE steel + paper.
+  'hashashin-light': {
+    name: 'hashashin-light',
     hl: true,
     fontSans: '"Spline Sans Mono", ui-monospace, monospace',
     fontMono: '"Spline Sans Mono", ui-monospace, monospace',
@@ -315,6 +315,15 @@ export function withStage(theme, stageId) {
   const stage = MicronStages[stageId];
   if (!stage || !stage[theme]) return base;
   return { ...base, ...stage[theme], stage: stageId, stageKind: stage.kind };
+}
+
+// Normalize a persisted/legacy theme id to a current one. Handles the
+// Hash Lab → Hashashin rename for values already saved in localStorage, and
+// falls back to the default theme when an unknown id is encountered.
+export function normalizeTheme(id) {
+  const legacy = { hashlab: 'hashashin', 'hashlab-light': 'hashashin-light' };
+  const next = legacy[id] || id;
+  return MicronTokens[next] ? next : 'hashashin';
 }
 
 // Standard micron bands (in workflow order: largest first = most "headstash")
