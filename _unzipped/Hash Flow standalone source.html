@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="ext-resource-dependency" content="metal.jpg" data-resource-id="metal" />
+<meta name="ext-resource-dependency" content="metal-dark.jpg" data-resource-id="metalDark" />
+<title>Micron — Hash Rosin Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #07080a; color: #fff; height: 100%; }
+  body {
+    font-family: 'Inter Tight', -apple-system, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  #stage {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-sizing: border-box;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(220,180,90,0.05), transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(100,140,160,0.04), transparent 50%),
+      #07080a;
+  }
+  #caption {
+    position: fixed; bottom: 14px; left: 0; right: 0; text-align: center;
+    font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px;
+    color: rgba(255,255,255,0.28); letter-spacing: 2px; pointer-events: none;
+  }
+</style>
+<script type="application/json" id="tweaks-defaults">
+/*EDITMODE-BEGIN*/{
+  "theme": "dark",
+  "weightUnit": "g",
+  "tempUnit": "F"
+}/*EDITMODE-END*/
+</script>
+<template id="__bundler_thumbnail" data-bg-color="#07080a">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="bg" cx="50%" cy="30%" r="70%">
+        <stop offset="0%" stop-color="#1A2028"/>
+        <stop offset="55%" stop-color="#0E1116"/>
+        <stop offset="100%" stop-color="#06080B"/>
+      </radialGradient>
+      <linearGradient id="dial" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#2C333E"/>
+        <stop offset="55%" stop-color="#1A1E25"/>
+        <stop offset="100%" stop-color="#0C0E12"/>
+      </linearGradient>
+    </defs>
+    <rect width="1200" height="800" fill="url(#bg)"/>
+    <!-- scale dial -->
+    <circle cx="600" cy="380" r="220" fill="url(#dial)" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
+    <circle cx="600" cy="380" r="220" fill="none" stroke="rgba(0,0,0,0.55)" stroke-width="1"/>
+    <!-- tick marks -->
+    <g stroke="rgba(255,255,255,0.35)" stroke-width="3" stroke-linecap="round">
+      <line x1="600" y1="180" x2="600" y2="210"/>
+      <line x1="800" y1="380" x2="770" y2="380"/>
+      <line x1="600" y1="580" x2="600" y2="550"/>
+      <line x1="400" y1="380" x2="430" y2="380"/>
+    </g>
+    <!-- needle -->
+    <line x1="600" y1="380" x2="720" y2="300" stroke="#EBCB89" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="600" cy="380" r="14" fill="#EBCB89"/>
+    <!-- wordmark -->
+    <text x="600" y="700" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="44" font-weight="700" fill="#E8ECF2" letter-spacing="12">MICRON</text>
+    <text x="600" y="740" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="18" fill="rgba(232,236,242,0.5)" letter-spacing="6">HASH ROSIN TRACKER</text>
+  </svg>
+</template>
+</head>
+<body>
+<div id="stage">
+  <div id="root"></div>
+</div>
+<div id="caption">MICRON · ICE WATER HASH TRACKER · PWA PROTOTYPE</div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="micron/ios-frame.jsx"></script>
+<script type="text/babel" src="micron/tokens.jsx"></script>
+<script type="text/babel" src="micron/data.jsx"></script>
+<script type="text/babel" src="micron/primitives.jsx"></script>
+<script type="text/babel" src="micron/screen-home.jsx"></script>
+<script type="text/babel" src="micron/screen-setup-wash.jsx"></script>
+<script type="text/babel" src="micron/screen-freezedry.jsx"></script>
+<script type="text/babel" src="micron/screen-press.jsx"></script>
+<script type="text/babel" src="micron/screen-summary.jsx"></script>
+<script type="text/babel" src="micron/app.jsx"></script>
+
+<script type="text/babel" data-presets="react">
+  function Shell() {
+    const [theme, setTheme] = React.useState(
+      localStorage.getItem('micron-theme') || 'dark'
+    );
+    React.useEffect(() => {
+      const i = setInterval(() => {
+        const t = localStorage.getItem('micron-theme') || 'dark';
+        if (t !== theme) setTheme(t);
+      }, 200);
+      return () => clearInterval(i);
+    }, [theme]);
+    const dark = theme === 'dark';
+    return (
+      <div data-screen-label="Micron prototype" style={{ position: 'relative' }}>
+        <IOSDevice dark={dark} width={402} height={874}>
+          <div style={{ position: 'relative', height: '100%', background: window.MicronTokens[theme].bg }}
+               data-screen-label="App">
+            <MicronApp/>
+          </div>
+        </IOSDevice>
+      </div>
+    );
+  }
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(<Shell/>);
+</script>
+
+</body>
+</html>

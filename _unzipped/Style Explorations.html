@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Micron — Style Explorations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@400;500;600;700;800;900&family=Archivo:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #08090b; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 56px 40px 90px;
+  }
+  .page-head { max-width: 1400px; margin: 0 auto 44px; }
+  .page-kicker {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 4px;
+    color: #6a7180; text-transform: uppercase; margin-bottom: 12px;
+  }
+  .page-title {
+    font-family: 'Inter Tight', sans-serif; font-size: 38px; font-weight: 700;
+    color: #f2f4f8; letter-spacing: -1.2px; line-height: 1.05;
+  }
+  .page-sub {
+    margin-top: 14px; font-size: 16px; color: #8b92a0; max-width: 620px; line-height: 1.5;
+  }
+  .grid {
+    max-width: 1400px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    gap: 30px;
+  }
+  .col { display: flex; flex-direction: column; gap: 18px; }
+  .col-head { padding: 0 4px; }
+  .col-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px;
+    color: #565d6b; margin-bottom: 8px;
+  }
+  .col-name {
+    font-size: 21px; font-weight: 700; letter-spacing: -0.5px; color: #eef0f4; margin-bottom: 5px;
+  }
+  .col-desc { font-size: 13px; line-height: 1.5; color: #7b8290; }
+  .col-meta {
+    margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.5px;
+    padding: 4px 8px; border-radius: 5px; background: rgba(255,255,255,0.05);
+    color: #8b92a0; border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* Phone frame */
+  .phone {
+    border-radius: 34px; overflow: hidden; position: relative;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.05);
+    aspect-ratio: 320 / 430;
+  }
+  .scr { position: absolute; inset: 0; padding: 24px 20px; display: flex; flex-direction: column; }
+  .spacer { flex: 1; min-height: 14px; }
+
+  /* shared bits inside screens */
+  .toprow { display: flex; align-items: center; justify-content: space-between; }
+  .tabs { display: flex; gap: 6px; margin: 18px 0; }
+  .tab { flex: 1; padding: 8px 4px; border-radius: 10px; text-align: center; }
+
+  /* ---------- DIRECTION A — BRUTALIST MONO ---------- */
+  .a { background: #0c0d10; color: #e9ebef; }
+  .a .kick { font-family: 'JetBrains Mono'; font-size: 10px; letter-spacing: 3px; color: #f5c451; }
+  .a .pill { font-family: 'JetBrains Mono'; font-size: 9px; letter-spacing: 1px; color: #6c7280; border: 1px solid #23262d; padding: 5px 9px; border-radius: 4px; }
+  .a .tab { background: #15171c; border: 1px solid #23262d; font-family: 'JetBrains Mono'; }
+  .a .tab.on { background: #f5c451; border-color: #f5c451; }
+  .a .tab .tl { font-family: 'JetBrains Mono'; font-size: 8px; letter-spacing: 1px; color: #6c7280; }
+  .a .tab.on .tl { color: #2a1f04; }
+  .a .tab .tv { font-family: 'JetBrains Mono'; font-size: 13px; font-weight: 700; margin-top: 3px; color: #9aa0ab; }
+  .a .tab.on .tv { color: #1a1303; }
+  .a .bignum {
+    font-family: 'Archivo Expanded'; font-weight: 900; font-size: 82px; line-height: 0.84;
+    letter-spacing: -3px; color: #f5f6f8;
+  }
+  .a .bignum small { font-size: 26px; color: #f5c451; font-weight: 700; }
+  .a .label { font-family: 'JetBrains Mono'; font-size: 10px; letter-spacing: 2px; color: #6c7280; margin-top: 6px; }
+  .a .swatches { display: flex; gap: 5px; margin-top: 20px; }
+  .a .sw { flex: 1; height: 26px; border-radius: 3px; }
+  .a .meta { margin-top: 16px; font-family: 'JetBrains Mono'; font-size: 10px; color: #6c7280; display: flex; justify-content: space-between; border-top: 1px solid #1c1f25; padding-top: 12px; }
+
+  /* ---------- DIRECTION B — EDITORIAL SERIF ---------- */
+  .b { background: linear-gradient(170deg, #1a1614 0%, #120f0d 100%); color: #f4ece0; }
+  .b .kick { font-family: 'JetBrains Mono'; font-size: 10px; letter-spacing: 3px; color: #c98a5e; }
+  .b .pill { font-family: 'Instrument Serif'; font-style: italic; font-size: 15px; color: #a8927f; }
+  .b .tab { background: rgba(255,255,255,0.03); border: 1px solid rgba(201,138,94,0.16); }
+  .b .tab.on { background: rgba(201,138,94,0.14); border-color: rgba(201,138,94,0.5); }
+  .b .tab .tl { font-family: 'JetBrains Mono'; font-size: 8px; letter-spacing: 1px; color: #8a7565; }
+  .b .tab .tv { font-family: 'Fraunces'; font-size: 17px; font-weight: 600; margin-top: 2px; color: #c2b3a4; }
+  .b .tab.on .tv { color: #f4ece0; }
+  .b .bignum {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 84px; line-height: 0.9;
+    letter-spacing: -2px; color: #f7efe4;
+  }
+  .b .bignum small { font-family: 'Instrument Serif'; font-style: italic; font-size: 30px; color: #c98a5e; }
+  .b .label { font-family: 'Instrument Serif'; font-style: italic; font-size: 17px; color: #a8927f; margin-top: 8px; }
+  .b .swatches { display: flex; gap: 6px; margin-top: 22px; }
+  .b .sw { flex: 1; height: 28px; border-radius: 999px; }
+  .b .meta { margin-top: 16px; font-family: 'Fraunces'; font-size: 13px; color: #a8927f; display: flex; justify-content: space-between; border-top: 1px solid rgba(201,138,94,0.16); padding-top: 12px; }
+
+  /* ---------- DIRECTION C — SOFT CLINICAL ---------- */
+  .c { background: #f4f6f9; color: #1a1f29; }
+  .c .kick { font-family: 'Space Grotesk'; font-size: 10px; letter-spacing: 2px; font-weight: 600; color: #4f8cff; }
+  .c .pill { font-family: 'Space Grotesk'; font-size: 11px; font-weight: 600; color: #8d95a3; background: #e7ebf1; padding: 6px 11px; border-radius: 999px; }
+  .c .tab { background: #fff; border: 1px solid #e2e7ee; box-shadow: 0 1px 2px rgba(20,30,50,0.04); }
+  .c .tab.on { background: #eaf1ff; border-color: #4f8cff; }
+  .c .tab .tl { font-family: 'Space Grotesk'; font-size: 9px; font-weight: 600; letter-spacing: 0.5px; color: #9aa2b1; }
+  .c .tab .tv { font-family: 'Space Grotesk'; font-size: 15px; font-weight: 700; margin-top: 3px; color: #717a8a; }
+  .c .tab.on .tv { color: #2563eb; }
+  .c .bignum {
+    font-family: 'DM Sans', sans-serif; font-weight: 800; font-size: 82px; line-height: 0.9;
+    letter-spacing: -3px; color: #11151c;
+  }
+  .c .bignum small { font-size: 24px; color: #4f8cff; font-weight: 700; }
+  .c .label { font-family: 'Space Grotesk'; font-size: 11px; font-weight: 600; letter-spacing: 1px; color: #8d95a3; margin-top: 8px; text-transform: uppercase; }
+  .c .swatches { display: flex; gap: 6px; margin-top: 22px; }
+  .c .sw { flex: 1; height: 28px; border-radius: 9px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); }
+  .c .meta { margin-top: 16px; font-family: 'Space Grotesk'; font-size: 11px; font-weight: 500; color: #8d95a3; display: flex; justify-content: space-between; border-top: 1px solid #e2e7ee; padding-top: 12px; }
+
+  /* ---------- DIRECTION D — NEON DISPLAY ---------- */
+  .d { background: radial-gradient(ellipse at 50% 0%, #161a2e 0%, #0a0b14 60%); color: #e6e8f5; }
+  .d .kick { font-family: 'Space Grotesk'; font-size: 10px; letter-spacing: 3px; font-weight: 600; color: #7cf5c4; }
+  .d .pill { font-family: 'JetBrains Mono'; font-size: 9px; letter-spacing: 1px; color: #7780a8; border: 1px solid #262b45; padding: 5px 9px; border-radius: 6px; }
+  .d .tab { background: rgba(255,255,255,0.03); border: 1px solid #232842; }
+  .d .tab.on { background: rgba(124,245,196,0.12); border-color: rgba(124,245,196,0.55); box-shadow: 0 0 18px rgba(124,245,196,0.18); }
+  .d .tab .tl { font-family: 'JetBrains Mono'; font-size: 8px; letter-spacing: 1px; color: #7780a8; }
+  .d .tab .tv { font-family: 'Bricolage Grotesque'; font-size: 16px; font-weight: 700; margin-top: 2px; color: #a3aad0; }
+  .d .tab.on .tv { color: #7cf5c4; }
+  .d .bignum {
+    font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 84px; line-height: 0.86;
+    letter-spacing: -3px;
+    color: #f0f2ff; text-shadow: 0 0 24px rgba(124,245,196,0.25);
+  }
+  .d .bignum small { font-size: 25px; color: #7cf5c4; font-weight: 700; text-shadow: 0 0 16px rgba(124,245,196,0.4); }
+  .d .label { font-family: 'JetBrains Mono'; font-size: 10px; letter-spacing: 2px; color: #7780a8; margin-top: 8px; }
+  .d .swatches { display: flex; gap: 6px; margin-top: 22px; }
+  .d .sw { flex: 1; height: 28px; border-radius: 7px; }
+  .d .meta { margin-top: 16px; font-family: 'JetBrains Mono'; font-size: 10px; color: #7780a8; display: flex; justify-content: space-between; border-top: 1px solid #1c2036; padding-top: 12px; }
+
+  /* ---------- DIRECTION E — INDUSTRIAL TERMINAL (HASH LAB) ---------- */
+  .e {
+    color: #EBE6D9;
+    background:
+      linear-gradient(160deg, rgba(53,61,57,0.82) 0%, rgba(42,49,46,0.86) 55%, rgba(32,37,31,0.92) 100%),
+      url('Metal Industrial.png') center/cover;
+    background-blend-mode: multiply, normal;
+  }
+  .e .kick { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 3px; color: #9A9C95; }
+  .e .brand { font-family: 'Share Tech Mono', monospace; font-size: 26px; color: #EBE6D9; text-shadow: 1px 1px 0 #000; line-height: 0.9; margin-top: 2px; }
+  .e .rule { height: 1px; background: #C85A3A; margin: 10px 0 14px; }
+  .e .step { background: rgba(0,0,0,0.62); border: 1px solid #5A635B; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); padding: 9px 12px; margin-bottom: 16px; }
+  .e .step span { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: #C85A3A; letter-spacing: 1px; }
+  .e .pill { font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: 1px; color: #EBE6D9; background: #232926; padding: 5px 8px; border: 1px solid #5A635B; }
+  .e .tabs { display: flex; gap: 5px; margin: 0 0 14px; }
+  .e .tab { background: #2C322E; border: 1px solid #45504A; border-radius: 3px; }
+  .e .tab.on { background: #37413D; border-color: #C85A3A; }
+  .e .tab .tl { font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: 1px; color: #9A9C95; }
+  .e .tab .tv { font-family: 'Share Tech Mono', monospace; font-size: 14px; margin-top: 3px; color: #b9bbb2; }
+  .e .tab.on .tv { color: #EBE6D9; }
+  .e .card { background: #37413D; border: 2px solid #5A635B; border-radius: 4px; padding: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+  .e .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .e .micron { font-family: 'Share Tech Mono', monospace; font-size: 24px; color: #EBE6D9; line-height: 1; }
+  .e .grade { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: #9A9C95; letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+  .e .scale { background: #232926; border: 1px solid #1A1F1D; box-shadow: inset 0 4px 12px rgba(0,0,0,0.6); padding: 14px 16px; display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 14px; border-radius: 2px; }
+  .e .scale-num { font-family: 'Share Tech Mono', monospace; font-size: 46px; color: #C85A3A; line-height: 0.95; letter-spacing: -1px; }
+  .e .scale-unit { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: #5A635B; }
+  .e .btn { width: 100%; background: #C85A3A; color: #1a1208; border: 1px solid #ECA888; border-radius: 2px; padding: 12px; font-family: 'Share Tech Mono', monospace; font-size: 15px; letter-spacing: 1px; text-transform: uppercase; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.4); text-align: center; }
+  .e .swatches { display: flex; gap: 5px; margin-top: 14px; }
+  .e .sw { flex: 1; height: 24px; border-radius: 2px; border: 1px solid rgba(0,0,0,0.3); }
+</style>
+</head>
+<body>
+  <div class="page-head">
+    <div class="page-kicker">Hash Rosin Tracker · Style Study</div>
+    <h1 class="page-title">Five styling directions</h1>
+    <p class="page-sub">The same weigh-in screen, rendered five ways — to compare number scale, type pairing, and color. Direction 05 is your “Hash Lab” concept. Tell me which to pursue (or mix), and I'll wire the winner into the live app as a switchable theme.</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- A -->
+    <div class="col">
+      <div class="col-head">
+        <div class="col-num">01</div>
+        <div class="col-name">Brutalist Mono</div>
+        <div class="col-desc">Oversized expanded numerals, all-monospace chrome, hard amber. Reads like industrial scale equipment — maximum number legibility.</div>
+        <div class="col-meta"><span class="tag">ARCHIVO EXPANDED</span><span class="tag">JETBRAINS MONO</span><span class="tag">AMBER / BLACK</span></div>
+      </div>
+      <div class="phone">
+        <div class="scr a">
+          <div class="toprow">
+            <span class="kick">FREEZE DRY</span>
+            <span class="pill">B-046</span>
+          </div>
+          <div class="tabs">
+            <div class="tab"><div class="tl">160µ</div><div class="tv">11.2</div></div>
+            <div class="tab on"><div class="tl">120µ</div><div class="tv">24.6</div></div>
+            <div class="tab"><div class="tl">90µ</div><div class="tv">38.1</div></div>
+            <div class="tab"><div class="tl">45µ</div><div class="tv">9.8</div></div>
+          </div>
+          <div class="spacer"></div>
+          <div class="bignum">24.6<small>G</small></div>
+          <div class="label">DRY WEIGHT · 120–159µ</div>
+          <div class="swatches">
+            <div class="sw" style="background:#EBCB89"></div>
+            <div class="sw" style="background:#D9A94B"></div>
+            <div class="sw" style="background:#A8B060"></div>
+            <div class="sw" style="background:#B8802B"></div>
+            <div class="sw" style="background:#5E3A12"></div>
+          </div>
+          <div class="meta"><span>WET 92.0G</span><span>−73% H₂O</span><span>MELT 5★</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B -->
+    <div class="col">
+      <div class="col-head">
+        <div class="col-num">02</div>
+        <div class="col-name">Editorial Serif</div>
+        <div class="col-desc">Fraunces display numerals with italic Instrument Serif accents over warm espresso. Craft, artisanal, premium — feels like a tasting journal.</div>
+        <div class="col-meta"><span class="tag">FRAUNCES</span><span class="tag">INSTRUMENT SERIF</span><span class="tag">ESPRESSO / COPPER</span></div>
+      </div>
+      <div class="phone">
+        <div class="scr b">
+          <div class="toprow">
+            <span class="kick">FREEZE DRY</span>
+            <span class="pill">Batch 046</span>
+          </div>
+          <div class="tabs">
+            <div class="tab"><div class="tl">160µ</div><div class="tv">11.2</div></div>
+            <div class="tab on"><div class="tl">120µ</div><div class="tv">24.6</div></div>
+            <div class="tab"><div class="tl">90µ</div><div class="tv">38.1</div></div>
+            <div class="tab"><div class="tl">45µ</div><div class="tv">9.8</div></div>
+          </div>
+          <div class="spacer"></div>
+          <div class="bignum">24.6<small>g</small></div>
+          <div class="label">Dry weight · 120–159 micron</div>
+          <div class="swatches">
+            <div class="sw" style="background:#EBCB89"></div>
+            <div class="sw" style="background:#D9A94B"></div>
+            <div class="sw" style="background:#A8B060"></div>
+            <div class="sw" style="background:#B8802B"></div>
+            <div class="sw" style="background:#5E3A12"></div>
+          </div>
+          <div class="meta"><span>Wet 92.0g</span><span>−73% water</span><span>Melt 5</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- C -->
+    <div class="col">
+      <div class="col-head">
+        <div class="col-num">03</div>
+        <div class="col-name">Soft Clinical</div>
+        <div class="col-desc">Light mode, rounded DM Sans numerals, calm clinical blue. Friendly, lab-grade, easy in a bright room — the safe modern default.</div>
+        <div class="col-meta"><span class="tag">DM SANS</span><span class="tag">SPACE GROTESK</span><span class="tag">CLINICAL BLUE</span></div>
+      </div>
+      <div class="phone">
+        <div class="scr c">
+          <div class="toprow">
+            <span class="kick">FREEZE DRY</span>
+            <span class="pill">B-046</span>
+          </div>
+          <div class="tabs">
+            <div class="tab"><div class="tl">160µ</div><div class="tv">11.2</div></div>
+            <div class="tab on"><div class="tl">120µ</div><div class="tv">24.6</div></div>
+            <div class="tab"><div class="tl">90µ</div><div class="tv">38.1</div></div>
+            <div class="tab"><div class="tl">45µ</div><div class="tv">9.8</div></div>
+          </div>
+          <div class="spacer"></div>
+          <div class="bignum">24.6<small>g</small></div>
+          <div class="label">Dry weight · 120–159µ</div>
+          <div class="swatches">
+            <div class="sw" style="background:#EBCB89"></div>
+            <div class="sw" style="background:#D9A94B"></div>
+            <div class="sw" style="background:#A8B060"></div>
+            <div class="sw" style="background:#B8802B"></div>
+            <div class="sw" style="background:#5E3A12"></div>
+          </div>
+          <div class="meta"><span>Wet 92.0g</span><span>−73% H₂O</span><span>Melt 5★</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- D -->
+    <div class="col">
+      <div class="col-head">
+        <div class="col-num">04</div>
+        <div class="col-name">Neon Display</div>
+        <div class="col-desc">Bricolage Grotesque numerals with a soft mint glow on deep indigo. Energetic, modern, screen-native — pops in a dark wash room.</div>
+        <div class="col-meta"><span class="tag">BRICOLAGE GROTESQUE</span><span class="tag">JETBRAINS MONO</span><span class="tag">MINT / INDIGO</span></div>
+      </div>
+      <div class="phone">
+        <div class="scr d">
+          <div class="toprow">
+            <span class="kick">FREEZE DRY</span>
+            <span class="pill">B-046</span>
+          </div>
+          <div class="tabs">
+            <div class="tab"><div class="tl">160µ</div><div class="tv">11.2</div></div>
+            <div class="tab on"><div class="tl">120µ</div><div class="tv">24.6</div></div>
+            <div class="tab"><div class="tl">90µ</div><div class="tv">38.1</div></div>
+            <div class="tab"><div class="tl">45µ</div><div class="tv">9.8</div></div>
+          </div>
+          <div class="spacer"></div>
+          <div class="bignum">24.6<small>g</small></div>
+          <div class="label">DRY WEIGHT · 120–159µ</div>
+          <div class="swatches">
+            <div class="sw" style="background:#EBCB89"></div>
+            <div class="sw" style="background:#D9A94B"></div>
+            <div class="sw" style="background:#A8B060"></div>
+            <div class="sw" style="background:#B8802B"></div>
+            <div class="sw" style="background:#5E3A12"></div>
+          </div>
+          <div class="meta"><span>WET 92.0G</span><span>−73% H₂O</span><span>MELT 5★</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E -->
+    <div class="col">
+      <div class="col-head">
+        <div class="col-num">05</div>
+        <div class="col-name">Industrial Terminal <span style="color:#C85A3A;font-size:13px;">← your Hash Lab</span></div>
+        <div class="col-desc">Share Tech Mono throughout, terracotta on brushed olive metal, recessed LCD scale readout with a hard log button. Rugged, equipment-grade, unmistakably a wash-room tool.</div>
+        <div class="col-meta"><span class="tag">SHARE TECH MONO</span><span class="tag">TERRACOTTA / OLIVE</span><span class="tag">LCD READOUT</span></div>
+      </div>
+      <div class="phone">
+        <div class="scr e">
+          <div class="kick">ICE WATER HASH LOG</div>
+          <div class="brand">HASH LAB</div>
+          <div class="rule"></div>
+          <div class="step"><span>FREEZE DRY // DRY WEIGHTS</span></div>
+          <div class="tabs">
+            <div class="tab"><div class="tl">160µ</div><div class="tv">11.2</div></div>
+            <div class="tab on"><div class="tl">120µ</div><div class="tv">24.6</div></div>
+            <div class="tab"><div class="tl">90µ</div><div class="tv">38.1</div></div>
+            <div class="tab"><div class="tl">45µ</div><div class="tv">9.8</div></div>
+          </div>
+          <div class="card">
+            <div class="card-top">
+              <div>
+                <div class="micron">120–159µ</div>
+                <div class="grade">Prime Grade</div>
+              </div>
+              <div class="pill">WEIGHED</div>
+            </div>
+            <div class="scale">
+              <div class="scale-num">24.600</div>
+              <div class="scale-unit">g</div>
+            </div>
+            <div class="btn">LOG WEIGHT</div>
+          </div>
+          <div class="swatches">
+            <div class="sw" style="background:#EBCB89"></div>
+            <div class="sw" style="background:#D9A94B"></div>
+            <div class="sw" style="background:#A8B060"></div>
+            <div class="sw" style="background:#B8802B"></div>
+            <div class="sw" style="background:#5E3A12"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
