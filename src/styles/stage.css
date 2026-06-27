@@ -1,42 +1,21 @@
-/* Global stage — centers the iOS device frame on a dark studio backdrop.
-   Ported from the prototype index.html. */
+/* Full-screen app shell. The app fills the entire viewport on mobile and
+   desktop — no simulated device frame or status bar. */
 html,
 body {
   margin: 0;
   padding: 0;
-  background: #07080a;
-  color: #fff;
   height: 100%;
+  background: #0c0e0c;
+  color: #fff;
 }
 
 body {
   font-family: 'Inter Tight', -apple-system, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
+  overscroll-behavior: none;
 }
 
-#stage {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  box-sizing: border-box;
-  background:
-    radial-gradient(circle at 20% 10%, rgba(220, 180, 90, 0.05), transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(100, 140, 160, 0.04), transparent 50%),
-    #07080a;
-}
-
-#caption {
-  position: fixed;
-  bottom: 14px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.28);
-  letter-spacing: 2px;
-  pointer-events: none;
+#root {
+  height: 100%;
 }
