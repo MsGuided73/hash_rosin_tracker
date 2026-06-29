@@ -51,8 +51,11 @@ export function PhotoNotes({ label, value = '', photos = [], onChange, onPhotosC
             </svg>
             ADD PHOTO
           </button>
+          {/* No `capture` attribute: mobile browsers then present a chooser
+              offering BOTH "Take Photo" (camera) and "Photo Library" (gallery).
+              Setting capture="environment" would force the camera and hide the
+              gallery option. */}
           <input ref={fileRef} type="file" accept="image/*" multiple
-            capture="environment"
             onChange={handleFiles}
             style={{ display: 'none' }}/>
         </div>
