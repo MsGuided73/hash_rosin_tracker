@@ -26,6 +26,7 @@ export const Icon = {
   starO:  (p) => <svg viewBox="0 0 20 20" fill="none" {...p}><path d="M10 2l2.5 5.2 5.7.8-4.1 4 1 5.6L10 15l-5.1 2.7 1-5.6-4.1-4 5.7-.8L10 2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>,
   more:   (p) => <svg viewBox="0 0 20 20" fill="currentColor" {...p}><circle cx="4" cy="10" r="1.6"/><circle cx="10" cy="10" r="1.6"/><circle cx="16" cy="10" r="1.6"/></svg>,
   settings: (p) => <svg viewBox="0 0 20 20" fill="none" {...p}><circle cx="10" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.4"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M4.3 15.7l1.4-1.4M14.3 5.7l1.4-1.4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>,
+  chart:  (p) => <svg viewBox="0 0 20 20" fill="none" {...p}><path d="M3 17h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><path d="M5 13v-3M9 13V6M13 13V9M17 13V4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>,
   filter: (p) => <svg viewBox="0 0 20 20" fill="none" {...p}><path d="M3 5h14M6 10h8M9 15h2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>,
   wash:   (p) => <svg viewBox="0 0 20 20" fill="none" {...p}><path d="M4 8c2 0 2-2 4-2s2 2 4 2 2-2 4-2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/><path d="M4 12c2 0 2-2 4-2s2 2 4 2 2-2 4-2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/><path d="M4 16c2 0 2-2 4-2s2 2 4 2 2-2 4-2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>,
 };

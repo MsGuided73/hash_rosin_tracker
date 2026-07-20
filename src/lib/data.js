@@ -26,6 +26,8 @@ export const MicronSeed = {
   // Default wash cycle template (6 passes)
   defaultWashCycle,
 
+  // NOTE: seed batches are flagged `demo: true` — the sync engine never
+  // uploads them, so shared analytics only contain real user data.
   batches: () => {
     const daysAgo = (n) => { const d = new Date(2026, 3, 18); d.setDate(d.getDate() - n); return d.toISOString(); };
     const mkBag = (wet, dry, color, melt, tex, notes) =>
@@ -37,7 +39,7 @@ export const MicronSeed = {
       freezeDryStart: null, freezeDryEnd: null,
     });
 
-    return [
+    const seeds = [
       // in progress — currently on Freeze Dry
       {
         id: 'B-046', strain: 'Papaya Zkittlez', operator: 'You',
@@ -153,6 +155,7 @@ export const MicronSeed = {
         biomassNotes: '',
       },
     ];
+    return seeds.map((b) => ({ ...b, demo: true }));
   },
 };
 

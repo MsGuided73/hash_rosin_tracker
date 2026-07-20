@@ -4,7 +4,7 @@ import { Icon, Segmented, formatG } from '../components/primitives.jsx';
 // Home screen — batch list + create new.
 const { useState: useStateH } = React;
 
-export function HomeScreen({ batches, onOpen, onCreate, unit, theme }) {
+export function HomeScreen({ batches, onOpen, onCreate, onAnalytics, unit, theme }) {
   const t = MicronTokens[theme];
   const [filter, setFilter] = useStateH('all');
   const active = batches.find((b) => b.stage !== 'done');
@@ -32,12 +32,21 @@ export function HomeScreen({ batches, onOpen, onCreate, unit, theme }) {
 
           </div>
         </div>
-        <button onClick={() => window.__onTweak && window.__onTweak()}
-        style={{
-          width: 40, height: 40, borderRadius: 999, border: `1px solid ${t.line}`,
-          background: t.bgElevated, color: t.textMuted,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
-        }}><Icon.settings width={18} height={18} /></button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button onClick={() => onAnalytics && onAnalytics()}
+          title="Analytics"
+          style={{
+            width: 40, height: 40, borderRadius: 999, border: `1px solid ${t.accent}55`,
+            background: t.accentSoft, color: t.accent,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+          }}><Icon.chart width={18} height={18} /></button>
+          <button onClick={() => window.__onTweak && window.__onTweak()}
+          style={{
+            width: 40, height: 40, borderRadius: 999, border: `1px solid ${t.line}`,
+            background: t.bgElevated, color: t.textMuted,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+          }}><Icon.settings width={18} height={18} /></button>
+        </div>
       </div>
 
       {/* scroll region */}

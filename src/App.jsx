@@ -9,6 +9,8 @@ import { FreezeDryScreen } from './screens/FreezeDryScreen.jsx';
 import { PressScreen } from './screens/PressScreen.jsx';
 import { CureScreen } from './screens/CureScreen.jsx';
 import { SummaryScreen } from './screens/SummaryScreen.jsx';
+import { AnalyticsScreen } from './screens/AnalyticsScreen.jsx';
+import { scheduleSync } from './lib/sync.js';
 
 const { useState: useStateA, useEffect: useEffectA, useMemo: useMemoA } = React;
 
@@ -30,13 +32,16 @@ export function MicronApp() {
   // Set global theme/stage SYNCHRONOUSLY during render so primitives (which read
   // window.__theme / window.__stage) get current values on the first paint.
   window.__theme = theme;
-  window.__stage = ({ home: null, setup: 'setup', wash: 'wash', freezedry: 'freezedry', press: 'press', cure: 'cure', summary: 'summary' })[route.name] || null;
+  window.__stage = ({ home: null, analytics: null, setup: 'setup', wash: 'wash', freezedry: 'freezedry', press: 'press', cure: 'cure', summary: 'summary' })[route.name] || null;
 
   useEffectA(() => { localStorage.setItem('micron-theme', theme); }, [theme]);
   useEffectA(() => { localStorage.setItem('micron-unit', unit); }, [unit]);
   useEffectA(() => { localStorage.setItem('micron-tempUnit', tempUnit); }, [tempUnit]);
   useEffectA(() => { localStorage.setItem('micron-route', JSON.stringify(route)); }, [route]);
   useEffectA(() => { localStorage.setItem('micron-batches', JSON.stringify(batches)); }, [batches]);
+  // Auto-save: every batch change is pushed to the shared database (debounced,
+  // demo batches excluded, retries silently when offline).
+  useEffectA(() => { scheduleSync(batches); }, [batches]);
   useEffectA(() => { window.__onTweak = () => setTweaksOpen(true); }, []);
 
   // Tweaks bridge
@@ -83,7 +88,11 @@ export function MicronApp() {
 
   // Render
   let screen;
-  if (route.name === 'home' || !currentBatch) {
+  if (route.name === 'analytics') {
+    screen = <AnalyticsScreen
+      batches={batches} unit={unit} theme={theme}
+      onBack={() => setRoute({ name: 'home' })}/>;
+  } else if (route.name === 'home' || !currentBatch) {
     screen = <HomeScreen
       batches={batches} unit={unit} theme={theme}
       onOpen={(id) => {
@@ -91,7 +100,8 @@ export function MicronApp() {
         if (!b) return;
         setRoute({ name: b.stage === 'done' ? 'summary' : b.stage, batchId: id });
       }}
-      onCreate={createNewBatch}/>;
+      onCreate={createNewBatch}
+      onAnalytics={() => setRoute({ name: 'analytics' })}/>;
   } else if (route.name === 'setup') {
     screen = <SetupScreen draft={currentBatch} setDraft={setCurrentBatch}
       theme={theme}

@@ -11,6 +11,44 @@ prototype has been migrated to a **Vite + React** build with ES modules. The app
 boots the prototype **1:1** (`npm run dev`) and is structured for the Supabase /
 PWA work described in [docs/DEV_TASK_LIST.md](docs/DEV_TASK_LIST.md).
 
+## Analytics + cloud database (the heart of the app)
+
+Every action in the app is **automatically saved** to a shared Supabase
+database and analyzed. There is no sign-up: each install silently provisions a
+per-device account (`device-auth` edge function → password sign-in), and every
+batch mutation is debounced and pushed through one transactional
+`sync_batch(jsonb)` RPC (farm, batch, bags, wash passes, presses, merged
+grades, cure log). Demo/seed batches are flagged `demo: true` and are **never**
+uploaded, so shared stats only contain real production data.
+
+The **Analytics** dashboard (chart button on Home) answers the questions the
+operation actually cares about, in two lenses — **MY DATA** (computed locally,
+works offline) and **NETWORK** (anonymized aggregates across every
+contributor via `SECURITY DEFINER` RPCs):
+
+- **KPIs** — batches, kg washed, hash pulled, rosin pressed, wash-yield %,
+  press-return %
+- **Economics / ROI** — biomass spend, cost per gram of rosin, market-price
+  slider → margin % and profit per kg washed
+- **Press Lab** — press-temp buckets vs return % with a "sweet spot" callout,
+  pressure buckets vs return %, and a temp × pressure recipe heatmap
+- **Wash Lab** — water-temperature buckets vs hash yield %
+- **Strain leaderboard** — dominance + avg return, melt, rosin totals
+- **Growers** — per-farm quality (wash yield) and cost per gram of rosin
+- **Micron bands** — where the hash lives, per-band melt averages
+- **Monthly trend** — rosin output over time
+
+Key modules: [supabase.js](src/lib/supabase.js) (client + device auth),
+[sync.js](src/lib/sync.js) (auto-save engine),
+[analytics.js](src/lib/analytics.js) (local compute + network fetch),
+[AnalyticsScreen.jsx](src/screens/AnalyticsScreen.jsx),
+[charts.jsx](src/components/charts.jsx). The deployed schema lives in the
+Supabase project's migrations (`core_schema`, `rls_policies`,
+`sync_rpc_and_views`, `security_hardening`);
+[docs/supabase-schema.sql](docs/supabase-schema.sql) is the original design
+reference. Row-level security scopes every table to its owner; the network
+analytics functions expose only anonymized aggregates to signed-in devices.
+
 ## Quick start
 
 ```bash
