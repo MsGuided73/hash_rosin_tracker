@@ -1,0 +1,12 @@
+node_modules
+dist
+.git
+_unzipped
+*.zip
+*.pdf
+docs
+.claude
+all-batches
+hashashin-*.csv
+hashashin-*.md
+hashashin-*.xlsx
