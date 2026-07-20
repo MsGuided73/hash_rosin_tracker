@@ -13,6 +13,8 @@ import { Icon, Segmented } from '../components/primitives.jsx';
 import { computeLocalAnalytics, fetchNetworkAnalytics } from '../lib/analytics.js';
 import { subscribeSync } from '../lib/sync.js';
 import { KpiTile, BucketBars, HeatGrid, LeaderBar, EmptyNote } from '../components/charts.jsx';
+import { InsightsFeed, AiAnalyst } from '../components/InsightsFeed.jsx';
+import { InfoTip } from '../components/InfoTip.jsx';
 
 const { useState, useEffect, useMemo } = React;
 
@@ -160,22 +162,44 @@ export function AnalyticsScreen({ batches, theme, onBack }) {
                   gap: 10,
                 }}
               >
-                <KpiTile t={t} label="FINISHED BATCHES" value={a.overview.batchCount} sub={`${a.overview.activeCount} in progress`} />
-                <KpiTile t={t} label="MATERIAL WASHED" value={(a.overview.totalInputG / 1000).toFixed(1)} unit="kg" />
-                <KpiTile t={t} label="HASH PULLED" value={fmtG(a.overview.totalHashG)} unit="g" sub={pctLabel(a.overview.avgHashYieldPct, 'avg wash yield')} />
-                <KpiTile t={t} label="ROSIN PRESSED" value={fmtG(a.overview.totalRosinG)} unit="g" accent sub={pctLabel(a.overview.avgRosinReturnPct, 'avg press return')} />
-                <KpiTile t={t} label="STRAINS" value={a.overview.strainCount} sub={`${a.overview.farmCount} farms`} />
+                <KpiTile t={t} label="FINISHED BATCHES" value={a.overview.batchCount} sub={`${a.overview.activeCount} in progress`}
+                  tip="Batches that completed the full workflow — only these count toward yield and return statistics." />
+                <KpiTile t={t} label="MATERIAL WASHED" value={(a.overview.totalInputG / 1000).toFixed(1)} unit="kg"
+                  tip="Total biomass that went into the wash vessel, across all finished batches." />
+                <KpiTile t={t} label="HASH PULLED" value={fmtG(a.overview.totalHashG)} unit="g" sub={pctLabel(a.overview.avgHashYieldPct, 'avg wash yield')}
+                  tip="Dry hash collected from the bags. Wash yield = dry hash ÷ biomass. 3–6% is typical for quality fresh frozen material." />
+                <KpiTile t={t} label="ROSIN PRESSED" value={fmtG(a.overview.totalRosinG)} unit="g" accent sub={pctLabel(a.overview.avgRosinReturnPct, 'avg press return')}
+                  tip="Finished rosin off the press. Press return = rosin ÷ hash charged. 65–80% is a healthy range; higher usually means better melt-grade hash." />
+                <KpiTile t={t} label="STRAINS" value={a.overview.strainCount} sub={`${a.overview.farmCount} farms`}
+                  tip="Distinct cultivars you've run. More strains = better comparisons on the leaderboard below." />
                 {a.overview.contributorCount != null && (
-                  <KpiTile t={t} label="CONTRIBUTORS" value={a.overview.contributorCount} sub="devices reporting" />
+                  <KpiTile t={t} label="CONTRIBUTORS" value={a.overview.contributorCount} sub="devices reporting"
+                    tip="How many devices are feeding the shared network dataset. All network numbers are anonymized aggregates." />
                 )}
               </div>
+
+              {/* Pattern recognizer + AI analyst — personal data only */}
+              {source === 'mine' && (
+                <>
+                  <InsightsFeed batches={batches} t={t} card={sectionCard} label={sectionLabel} />
+                  <AiAnalyst batches={batches} t={t} card={sectionCard} label={sectionLabel} />
+                </>
+              )}
 
               {/* Economics / ROI */}
               <Economics t={t} a={a} priceG={priceG} setPriceG={setPriceG} card={sectionCard} label={sectionLabel} />
 
               {/* Press lab */}
               <div style={sectionCard}>
-                <div style={sectionLabel}>PRESS LAB · TEMPERATURE VS RETURN</div>
+                <div style={{ ...sectionLabel, display: 'flex', alignItems: 'center' }}>
+                  PRESS LAB · TEMPERATURE VS RETURN
+                  <InfoTip t={t} wide>
+                    Each bar is a 5°F range of plate temperature; height is the average press
+                    return in that range. Lower temps preserve terps but can return less —
+                    this chart shows where your material actually performs. n = number of runs;
+                    trust ranges with more runs.
+                  </InfoTip>
+                </div>
                 <IdealCallout t={t} buckets={a.tempBuckets} unitLabel="°F" xKey="tempBucket" span={5} />
                 <BucketBars
                   t={t}
@@ -193,7 +217,14 @@ export function AnalyticsScreen({ batches, theme, onBack }) {
                 }}
               >
                 <div style={sectionCard}>
-                  <div style={sectionLabel}>PRESSURE VS RETURN</div>
+                  <div style={{ ...sectionLabel, display: 'flex', alignItems: 'center' }}>
+                    PRESSURE VS RETURN
+                    <InfoTip t={t} wide>
+                      Average return by plate pressure (100 PSI ranges). More pressure isn't
+                      automatically better — too much can blow out bags and push fats through.
+                      Watch where your returns actually peak.
+                    </InfoTip>
+                  </div>
                   <IdealCallout t={t} buckets={a.pressureBuckets} unitLabel="PSI" xKey="psiBucket" span={100} />
                   <BucketBars
                     t={t}
@@ -202,7 +233,14 @@ export function AnalyticsScreen({ batches, theme, onBack }) {
                   />
                 </div>
                 <div style={sectionCard}>
-                  <div style={sectionLabel}>WASH LAB · WATER TEMP VS HASH YIELD</div>
+                  <div style={{ ...sectionLabel, display: 'flex', alignItems: 'center' }}>
+                    WASH LAB · WATER TEMP VS HASH YIELD
+                    <InfoTip t={t} wide>
+                      Colder water keeps trichome heads brittle so they snap off clean.
+                      This compares your logged water temperatures against how much hash
+                      each wash pulled.
+                    </InfoTip>
+                  </div>
                   <BucketBars
                     t={t}
                     data={a.waterTempBuckets.map((b) => ({ x: b.waterTempBucket, value: b.avgHashYieldPct, count: b.batchCount }))}
@@ -213,13 +251,27 @@ export function AnalyticsScreen({ batches, theme, onBack }) {
               </div>
 
               <div style={sectionCard}>
-                <div style={sectionLabel}>RECIPE MAP · TEMP × PRESSURE → AVG RETURN</div>
+                <div style={{ ...sectionLabel, display: 'flex', alignItems: 'center' }}>
+                  RECIPE MAP · TEMP × PRESSURE → AVG RETURN
+                  <InfoTip t={t} wide>
+                    Every cell is a temp + pressure combination you've actually run; brighter
+                    = better average return, and the outlined cell is your best recipe so far.
+                    Use it to pick settings for the next press.
+                  </InfoTip>
+                </div>
                 <HeatGrid t={t} grid={a.grid} />
               </div>
 
               {/* Strain leaderboard */}
               <div style={sectionCard}>
-                <div style={sectionLabel}>STRAIN LEADERBOARD · BY PRESS RETURN</div>
+                <div style={{ ...sectionLabel, display: 'flex', alignItems: 'center' }}>
+                  STRAIN LEADERBOARD · BY PRESS RETURN
+                  <InfoTip t={t} wide>
+                    Strains ranked by average press return. Melt is the 1–6 bag rating
+                    (6 = full melt). A strain that returns well AND melts high is worth
+                    paying a premium for.
+                  </InfoTip>
+                </div>
                 {a.strains.length === 0 && <EmptyNote t={t} />}
                 {a.strains.slice(0, 12).map((s) => (
                   <LeaderBar
@@ -236,7 +288,14 @@ export function AnalyticsScreen({ batches, theme, onBack }) {
 
               {/* Growers */}
               <div style={sectionCard}>
-                <div style={sectionLabel}>GROWERS · QUALITY & COST</div>
+                <div style={{ ...sectionLabel, display: 'flex', alignItems: 'center' }}>
+                  GROWERS · QUALITY & COST
+                  <InfoTip t={t} wide>
+                    Farms ranked by wash yield (how much hash their material gives up), with
+                    the real cost per finished gram of rosin next to it. Cheap biomass that
+                    washes poorly is often the expensive option.
+                  </InfoTip>
+                </div>
                 {a.farms.length === 0 && <EmptyNote t={t}>NO FARMS TAGGED YET</EmptyNote>}
                 {a.farms.map((f) => (
                   <LeaderBar
@@ -263,7 +322,13 @@ export function AnalyticsScreen({ batches, theme, onBack }) {
                 }}
               >
                 <div style={sectionCard}>
-                  <div style={sectionLabel}>MICRON BANDS · WHERE THE HASH LIVES</div>
+                  <div style={{ ...sectionLabel, display: 'flex', alignItems: 'center' }}>
+                    MICRON BANDS · WHERE THE HASH LIVES
+                    <InfoTip t={t} wide>
+                      How your dry hash splits across bag sizes. 90–119µ is usually the
+                      premium band; high melt averages there mean dab-jar material.
+                    </InfoTip>
+                  </div>
                   <MicronSplit t={t} bands={a.micronBands} />
                 </div>
                 <div style={sectionCard}>
@@ -295,7 +360,14 @@ function Economics({ t, a, priceG, setPriceG, card, label }) {
 
   return (
     <div style={card}>
-      <div style={label}>ECONOMICS · BIOMASS COST → ROSIN VALUE</div>
+      <div style={{ ...label, display: 'flex', alignItems: 'center' }}>
+        ECONOMICS · BIOMASS COST → ROSIN VALUE
+        <InfoTip t={t} wide>
+          What your rosin really costs to make, and what it's worth. Drag the market
+          price slider to your actual selling price — margin and profit-per-kilo update
+          live. Cost data comes from the price-per-pound you log at batch setup.
+        </InfoTip>
+      </div>
       <div
         style={{
           display: 'grid',

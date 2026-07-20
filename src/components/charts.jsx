@@ -1,8 +1,9 @@
 // Lightweight themed chart primitives for the Analytics dashboard.
 // Pure SVG/CSS — no chart library, matches the Hashashin industrial look.
 import React from 'react';
+import { InfoTip } from './InfoTip.jsx';
 
-export function KpiTile({ label, value, unit, sub, t, accent }) {
+export function KpiTile({ label, value, unit, sub, t, accent, tip }) {
   return (
     <div
       style={{
@@ -14,8 +15,9 @@ export function KpiTile({ label, value, unit, sub, t, accent }) {
         minWidth: 0,
       }}
     >
-      <div style={{ fontFamily: t.fontMono, fontSize: 9, color: t.textDim, letterSpacing: 1.5 }}>
+      <div style={{ fontFamily: t.fontMono, fontSize: 9, color: t.textDim, letterSpacing: 1.5, display: 'flex', alignItems: 'center' }}>
         {label}
+        {tip && <InfoTip t={t} side="bottom">{tip}</InfoTip>}
       </div>
       <div
         style={{

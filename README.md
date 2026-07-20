@@ -21,6 +21,26 @@ batch mutation is debounced and pushed through one transactional
 grades, cure log). Demo/seed batches are flagged `demo: true` and are **never**
 uploaded, so shared stats only contain real production data.
 
+### Insights, AI analyst, and the record keeper
+
+The dashboard opens with **"What your results are saying"** — a pattern
+recognizer ([insights.js](src/lib/insights.js)) that watches the data as it
+comes in and turns it into plain-language findings: press-temp sweet spots,
+less-vs-more pressure verdicts, strain champions and laggards, grower quality
+drift, cost-per-gram winners, quality signals, trends, milestones, and soft
+data-hygiene guidance ("2 batches are missing dry weights"). Every finding is
+upserted into the `insights` table with the date it was first recognized — a
+permanent journal per user.
+
+The **AI Analyst** panel sends a summary of the user's own data to Claude via
+the `ai-analyst` edge function and returns a narrative read plus a "next
+experiment" recommendation; its findings are journaled too. It activates when
+the backend has an Anthropic key (`supabase secrets set ANTHROPIC_API_KEY=…`)
+and degrades gracefully to a how-to-enable note otherwise.
+
+Every metric and section carries an ⓘ tooltip ([InfoTip.jsx](src/components/InfoTip.jsx))
+explaining in plain language what the number means and what's a healthy range.
+
 The **Analytics** dashboard (chart button on Home) answers the questions the
 operation actually cares about, in two lenses — **MY DATA** (computed locally,
 works offline) and **NETWORK** (anonymized aggregates across every
