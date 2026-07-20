@@ -64,6 +64,13 @@ export function AnalyticsScreen({ batches, theme, onBack }) {
     letterSpacing: 2,
     marginBottom: 12,
   };
+  // Responsive tiling: sections sit side-by-side on wide screens and stack on
+  // phones. min(Npx, 100%) keeps cards from overflowing narrow viewports.
+  const grid = (min) => ({
+    display: 'grid',
+    gridTemplateColumns: `repeat(auto-fit, minmax(min(${min}px, 100%), 1fr))`,
+    gap: 12,
+  });
 
   return (
     <div
@@ -118,12 +125,12 @@ export function AnalyticsScreen({ batches, theme, onBack }) {
       <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
         <div
           style={{
-            maxWidth: 1180,
+            maxWidth: 1760,
             margin: '0 auto',
-            padding: '18px 16px 40px',
+            padding: '14px 14px 32px',
             display: 'flex',
             flexDirection: 'column',
-            gap: 14,
+            gap: 12,
           }}
         >
           {/* status strip */}
@@ -183,8 +190,10 @@ export function AnalyticsScreen({ batches, theme, onBack }) {
               {source === 'mine' && (
                 <>
                   <InsightsFeed batches={batches} t={t} card={sectionCard} label={sectionLabel} />
-                  <AiAnalyst batches={batches} t={t} card={sectionCard} label={sectionLabel} />
-                  <AskAnalyst batches={batches} t={t} card={sectionCard} label={sectionLabel} />
+                  <div style={grid(360)}>
+                    <AiAnalyst batches={batches} t={t} card={sectionCard} label={sectionLabel} />
+                    <AskAnalyst batches={batches} t={t} card={sectionCard} label={sectionLabel} />
+                  </div>
                 </>
               )}
 
@@ -192,6 +201,7 @@ export function AnalyticsScreen({ batches, theme, onBack }) {
               <Economics t={t} a={a} priceG={priceG} setPriceG={setPriceG} card={sectionCard} label={sectionLabel} />
 
               {/* Press lab */}
+              <div style={grid(320)}>
               <div style={sectionCard}>
                 <div style={{ ...sectionLabel, display: 'flex', alignItems: 'center' }}>
                   PRESS LAB · TEMPERATURE VS RETURN
@@ -211,13 +221,6 @@ export function AnalyticsScreen({ batches, theme, onBack }) {
                 />
               </div>
 
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                  gap: 14,
-                }}
-              >
                 <div style={sectionCard}>
                   <div style={{ ...sectionLabel, display: 'flex', alignItems: 'center' }}>
                     PRESSURE VS RETURN
@@ -252,6 +255,7 @@ export function AnalyticsScreen({ batches, theme, onBack }) {
                 </div>
               </div>
 
+              <div style={grid(430)}>
               <div style={sectionCard}>
                 <div style={{ ...sectionLabel, display: 'flex', alignItems: 'center' }}>
                   RECIPE MAP · TEMP × PRESSURE → AVG RETURN
@@ -287,8 +291,10 @@ export function AnalyticsScreen({ batches, theme, onBack }) {
                   />
                 ))}
               </div>
+              </div>
 
-              {/* Growers */}
+              {/* Growers + export */}
+              <div style={grid(380)}>
               <div style={sectionCard}>
                 <div style={{ ...sectionLabel, display: 'flex', alignItems: 'center' }}>
                   GROWERS · QUALITY & COST
@@ -315,19 +321,13 @@ export function AnalyticsScreen({ batches, theme, onBack }) {
                 ))}
               </div>
 
-              {/* Export */}
               {source === 'mine' && (
                 <ExportPanel batches={batches} t={t} card={sectionCard} label={sectionLabel} />
               )}
+              </div>
 
               {/* Micron bands + trend */}
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                  gap: 14,
-                }}
-              >
+              <div style={grid(340)}>
                 <div style={sectionCard}>
                   <div style={{ ...sectionLabel, display: 'flex', alignItems: 'center' }}>
                     MICRON BANDS · WHERE THE HASH LIVES
