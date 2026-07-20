@@ -57,6 +57,20 @@ export function ensureSession() {
   return sessionPromise;
 }
 
+// Own profile (membership status etc). Membership is enforced server-side;
+// this only drives what the UI shows.
+export async function fetchOwnProfile() {
+  const session = await ensureSession();
+  const sb = getSupabase();
+  const { data, error } = await sb
+    .from('profiles')
+    .select('display_name, is_member, member_since')
+    .eq('id', session.user.id)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
 async function bootstrapSession() {
   const sb = getSupabase();
   const { data } = await sb.auth.getSession();

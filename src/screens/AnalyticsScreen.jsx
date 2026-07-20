@@ -13,7 +13,8 @@ import { Icon, Segmented } from '../components/primitives.jsx';
 import { computeLocalAnalytics, fetchNetworkAnalytics } from '../lib/analytics.js';
 import { subscribeSync } from '../lib/sync.js';
 import { KpiTile, BucketBars, HeatGrid, LeaderBar, EmptyNote } from '../components/charts.jsx';
-import { InsightsFeed, AiAnalyst } from '../components/InsightsFeed.jsx';
+import { InsightsFeed, AiAnalyst, AskAnalyst } from '../components/InsightsFeed.jsx';
+import { ExportPanel } from '../components/ExportPanel.jsx';
 import { InfoTip } from '../components/InfoTip.jsx';
 
 const { useState, useEffect, useMemo } = React;
@@ -183,6 +184,7 @@ export function AnalyticsScreen({ batches, theme, onBack }) {
                 <>
                   <InsightsFeed batches={batches} t={t} card={sectionCard} label={sectionLabel} />
                   <AiAnalyst batches={batches} t={t} card={sectionCard} label={sectionLabel} />
+                  <AskAnalyst batches={batches} t={t} card={sectionCard} label={sectionLabel} />
                 </>
               )}
 
@@ -312,6 +314,11 @@ export function AnalyticsScreen({ batches, theme, onBack }) {
                   />
                 ))}
               </div>
+
+              {/* Export */}
+              {source === 'mine' && (
+                <ExportPanel batches={batches} t={t} card={sectionCard} label={sectionLabel} />
+              )}
 
               {/* Micron bands + trend */}
               <div

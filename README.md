@@ -41,6 +41,24 @@ and degrades gracefully to a how-to-enable note otherwise.
 Every metric and section carries an ⓘ tooltip ([InfoTip.jsx](src/components/InfoTip.jsx))
 explaining in plain language what the number means and what's a healthy range.
 
+### Exports and Ask-the-Analyst (members)
+
+The **Export Records** panel ([export.js](src/lib/export.js),
+[ExportPanel.jsx](src/components/ExportPanel.jsx)) downloads data scoped to
+everything, one strain, or one batch, as: **.csv** (BOM'd, opens clean in
+Excel/Sheets; Batches + Bags + Press Runs sections), **.md** (readable report
+with summary table and per-batch narrative), or **Excel** (real .xlsx workbook
+with Batches / Bags / Press Runs sheets; SheetJS is dynamically imported so
+it never weighs down the main bundle).
+
+**Ask the Analyst** is a members-only Q&A: type any question ("How do I lift
+my wash yield on outdoor material?") and the `ai-analyst` edge function
+answers it against the user's own numbers plus solventless best practice,
+with follow-up question chips. Membership lives in `profiles.is_member` and
+is enforced **server-side**; column-level grants stop users from flipping
+their own flag (only the service role can). Grant a member with:
+`update profiles set is_member = true, member_since = now() where id = '<user-uuid>';`
+
 The **Analytics** dashboard (chart button on Home) answers the questions the
 operation actually cares about, in two lenses — **MY DATA** (computed locally,
 works offline) and **NETWORK** (anonymized aggregates across every

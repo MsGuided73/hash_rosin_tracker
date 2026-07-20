@@ -3,7 +3,7 @@
 // the AI Analyst panel (Claude via the ai-analyst edge function).
 import React from 'react';
 import { computeInsights, recordInsights } from '../lib/insights.js';
-import { getSupabase, ensureSession } from '../lib/supabase.js';
+import { getSupabase, ensureSession, fetchOwnProfile } from '../lib/supabase.js';
 import { deriveBatch } from '../lib/analytics.js';
 import { InfoTip } from './InfoTip.jsx';
 
@@ -232,6 +232,147 @@ export function AiAnalyst({ batches, t, card, label }) {
             <AiButton t={t} onClick={run}>RE-ANALYZE</AiButton>
           </div>
         </div>
+      )}
+    </div>
+  );
+}
+
+// ─────────── Ask the Analyst (members) ───────────
+export function AskAnalyst({ batches, t, card, label }) {
+  const [membership, setMembership] = useState('unknown'); // unknown | member | locked
+  const [question, setQuestion] = useState('');
+  const [state, setState] = useState({ status: 'idle', qa: null, error: null });
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchOwnProfile()
+      .then((p) => !cancelled && setMembership(p?.is_member ? 'member' : 'locked'))
+      .catch(() => !cancelled && setMembership('locked'));
+    return () => { cancelled = true; };
+  }, []);
+
+  const ask = async (q) => {
+    const text = (q ?? question).trim();
+    if (!text) return;
+    setQuestion(text);
+    setState({ status: 'loading', qa: null, error: null });
+    try {
+      await ensureSession();
+      const sb = getSupabase();
+      const { data, error } = await sb.functions.invoke('ai-analyst', {
+        body: { summary: buildAiSummary(batches), question: text },
+      });
+      if (error) {
+        let code = null;
+        try {
+          const body = await error.context?.json();
+          code = body?.error;
+        } catch { /* opaque error — fall through */ }
+        if (code === 'members_only') { setMembership('locked'); setState({ status: 'idle', qa: null, error: null }); return; }
+        if (code === 'not_configured') { setState({ status: 'unconfigured', qa: null, error: null }); return; }
+        throw new Error(code || error.message);
+      }
+      setState({ status: 'ready', qa: data.qa, error: null });
+    } catch (err) {
+      setState({ status: 'error', qa: null, error: err.message || String(err) });
+    }
+  };
+
+  const inputStyle = {
+    flex: 1,
+    minWidth: 200,
+    height: 44,
+    padding: '0 14px',
+    borderRadius: t.btnRadius ?? 10,
+    border: `1px solid ${t.lineStrong}`,
+    background: t.bgElevated2,
+    color: t.text,
+    fontFamily: t.fontSans,
+    fontSize: 13,
+    outline: 'none',
+  };
+
+  return (
+    <div style={card}>
+      <div style={{ ...label, display: 'flex', alignItems: 'center' }}>
+        ASK THE ANALYST · MEMBERS
+        <InfoTip t={t} wide>
+          Members can ask the analyst direct questions — "how do I lift my wash
+          yield?", "why did my last press return low?" — and get answers grounded
+          in their own numbers plus solventless best practice.
+        </InfoTip>
+      </div>
+
+      {membership === 'locked' ? (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 20 }}>🔒</span>
+          <div style={{ fontFamily: t.fontSans, fontSize: 13, color: t.textMuted, lineHeight: 1.55, flex: 1, minWidth: 220 }}>
+            Direct Q&A with the analyst is a membership feature. Your pattern feed and
+            one-tap analysis stay free — membership adds unlimited questions about
+            improving yield, wash technique, press recipes, and cure.
+          </div>
+        </div>
+      ) : (
+        <>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <input
+              style={inputStyle}
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && ask()}
+              placeholder="e.g. How can I improve my wash yield on outdoor material?"
+              aria-label="Ask the analyst a question"
+            />
+            <AiButton t={t} onClick={() => ask()}>ASK</AiButton>
+          </div>
+
+          {state.status === 'loading' && (
+            <div style={{ fontFamily: t.fontMono, fontSize: 11, color: t.accent, letterSpacing: 1, marginTop: 12 }}>
+              THINKING IT THROUGH…
+            </div>
+          )}
+          {state.status === 'unconfigured' && (
+            <div style={{ fontFamily: t.fontSans, fontSize: 12.5, color: t.textMuted, marginTop: 12, lineHeight: 1.6 }}>
+              The analyst needs an Anthropic API key on the backend before it can answer
+              (<span style={{ fontFamily: t.fontMono, fontSize: 11 }}>supabase secrets set ANTHROPIC_API_KEY=…</span>).
+            </div>
+          )}
+          {state.status === 'error' && (
+            <div style={{ fontFamily: t.fontSans, fontSize: 12.5, color: t.danger, marginTop: 12 }}>
+              {state.error}
+            </div>
+          )}
+          {state.status === 'ready' && state.qa && (
+            <div style={{ marginTop: 14 }}>
+              <div style={{ fontFamily: t.fontSans, fontSize: 13.5, color: t.text, lineHeight: 1.65, whiteSpace: 'pre-wrap' }}>
+                {state.qa.answer}
+              </div>
+              {(state.qa.follow_ups || []).length > 0 && (
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
+                  {state.qa.follow_ups.map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => ask(f)}
+                      style={{
+                        padding: '7px 12px',
+                        borderRadius: 999,
+                        border: `1px solid ${t.line}`,
+                        background: t.bgElevated2,
+                        color: t.textMuted,
+                        fontFamily: t.fontSans,
+                        fontSize: 12,
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                      }}
+                    >
+                      {f}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
