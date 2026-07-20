@@ -36,3 +36,9 @@ coverage
 
 # original prototype archive (kept locally as reference, not version-controlled)
 "Hash Rosin Tracker.zip"
+
+# local export downloads
+all-batches/
+hashashin-*.csv
+hashashin-*.md
+hashashin-*.xlsx
