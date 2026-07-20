@@ -11,6 +11,7 @@ import { CureScreen } from './screens/CureScreen.jsx';
 import { SummaryScreen } from './screens/SummaryScreen.jsx';
 import { AnalyticsScreen } from './screens/AnalyticsScreen.jsx';
 import { scheduleSync } from './lib/sync.js';
+import { subscribeInstall, promptInstall, isIOSSafari } from './lib/pwa-install.js';
 
 const { useState: useStateA, useEffect: useEffectA, useMemo: useMemoA } = React;
 
@@ -165,6 +166,8 @@ export function MicronApp() {
 // ─────────── Tweaks ───────────
 function TweaksPanel({ open, onClose, theme, setTheme, unit, setUnit, tempUnit, setTempUnit, onReset }) {
   const t = MicronTokens[theme];
+  const [installable, setInstallable] = React.useState(false);
+  React.useEffect(() => subscribeInstall(setInstallable), []);
   if (!open) return null;
   return (
     <Sheet open={open} onClose={onClose} title="Tweaks">
@@ -203,13 +206,28 @@ function TweaksPanel({ open, onClose, theme, setTheme, unit, setUnit, tempUnit, 
             options={[{ value: 'F', label: '°F' }, { value: 'C', label: '°C' }]}
             value={tempUnit} onChange={setTempUnit}/>
         </TweakRow>
+        {installable && (
+          <Btn fullWidth style={{ marginTop: 20 }} onClick={() => promptInstall()}>
+            Install Hashashin on this device
+          </Btn>
+        )}
+        {!installable && isIOSSafari() && (
+          <div style={{
+            marginTop: 20, padding: 14, borderRadius: 12,
+            background: t.accentSoft, border: `1px solid ${t.accent}44`,
+            fontFamily: t.fontSans, fontSize: 13, color: t.text, lineHeight: 1.5,
+          }}>
+            Install on iPhone: tap the Share button in Safari, then
+            “Add to Home Screen.”
+          </div>
+        )}
         <div style={{
-          marginTop: 20, padding: 14, borderRadius: 12,
+          marginTop: 14, padding: 14, borderRadius: 12,
           background: t.bgElevated2,
           fontFamily: t.fontSans, fontSize: 13, color: t.textMuted, lineHeight: 1.45,
         }}>
-          Hashashin is a working draft. Data is stored locally in your browser — export or reset
-          anytime. In production this would sync via the installed PWA.
+          Your work is saved on this device and auto-synced to the cloud as you go.
+          Install the app for a full-screen, offline-capable experience.
         </div>
         <Btn kind="danger" fullWidth style={{ marginTop: 14 }} onClick={onReset}>
           Reset prototype data

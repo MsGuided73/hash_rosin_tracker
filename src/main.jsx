@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { MicronTokens, normalizeTheme } from './lib/tokens.js';
 import { MicronApp } from './App.jsx';
 import './styles/stage.css';
+import './lib/pwa-install.js'; // capture beforeinstallprompt as early as possible
 
 // Shell — renders the app full-screen (no simulated device frame / status bar)
 // and reflects the active theme background. Polls localStorage so theme changes

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Hashashin app icon — precision pressure gauge on dark tile -->
+  <rect width="512" height="512" fill="#181C18"/>
+  <g>
+    <!-- gauge track (270° sweep) -->
+    <path d="M120 333 A153 153 0 1 1 392 333" stroke="#5A665C" stroke-width="30" fill="none" stroke-linecap="round"/>
+    <!-- terracotta live segment -->
+    <path d="M120 333 A153 153 0 0 1 256 103" stroke="#C85A3A" stroke-width="30" fill="none" stroke-linecap="round"/>
+    <!-- needle -->
+    <line x1="256" y1="282" x2="179" y2="171" stroke="#F2EFE6" stroke-width="22" stroke-linecap="round"/>
+    <!-- hub -->
+    <circle cx="256" cy="282" r="31" fill="#C85A3A"/>
+    <circle cx="256" cy="282" r="12" fill="#181C18"/>
+    <!-- tick marks -->
+    <g fill="#9AA096">
+      <rect x="243" y="376" width="26" height="34" rx="5"/>
+      <rect x="128" y="350" width="26" height="34" rx="5" transform="rotate(30 141 367)"/>
+      <rect x="358" y="350" width="26" height="34" rx="5" transform="rotate(-30 371 367)"/>
+    </g>
+  </g>
+</svg>

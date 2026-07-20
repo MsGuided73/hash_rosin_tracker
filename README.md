@@ -87,6 +87,16 @@ Supabase project's migrations (`core_schema`, `rls_policies`,
 reference. Row-level security scopes every table to its owner; the network
 analytics functions expose only anonymized aggregates to signed-in devices.
 
+### Installable PWA
+
+The app installs to the home screen: `vite-plugin-pwa` generates the service
+worker (app shell precached, Google Fonts runtime-cached, auto-update) and the
+manifest (pressure-gauge icon set: 192/512 + maskable + apple-touch-icon,
+regenerate with `node scripts/generate-icons.mjs`). Android/desktop Chrome get
+an "Install Hashashin" button in the Tweaks panel via `beforeinstallprompt`;
+iOS Safari shows an "Add to Home Screen" hint. Install prompts require HTTPS,
+so this activates fully once the app is deployed.
+
 ## Quick start
 
 ```bash
