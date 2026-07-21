@@ -1,33 +1,66 @@
 // PhotoNotes — reusable notes field with attached photo thumbnails.
-// For the prototype, photos are stored as data URLs in state. In production
-// these will be uploaded to Supabase Storage and replaced with signed URLs.
+// Two capture paths, both auto-backed-up to Supabase Storage (photo-backup.js):
+//   TAKE   — native camera on touch devices (capture="environment"),
+//            getUserMedia webcam modal on desktop
+//   UPLOAD — file picker / photo library (no capture attribute, so mobile
+//            browsers offer the gallery)
 
 import React from 'react';
 import { MicronTokens, withStage } from '../lib/tokens.js';
 import { Icon } from './primitives.jsx';
 
-const { useRef: useRefPN, useState: useStatePN } = React;
+const { useRef: useRefPN, useState: useStatePN, useEffect: useEffectPN } = React;
+
+const isCoarsePointer = () =>
+  typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+const hasWebcamApi = () =>
+  typeof navigator !== 'undefined' && !!navigator.mediaDevices?.getUserMedia;
 
 export function PhotoNotes({ label, value = '', photos = [], onChange, onPhotosChange, placeholder, theme, accentColor }) {
   const t = (window.__stage && withStage) ? withStage(theme, window.__stage) : MicronTokens[theme];
   const fileRef = useRefPN(null);
+  const takeRef = useRefPN(null);
   const [lightbox, setLightbox] = useStatePN(null);
+  const [camera, setCamera] = useStatePN(false);
+
+  const addPhotos = (newPhotos) => {
+    onPhotosChange([...(photos || []), ...newPhotos]);
+  };
 
   const handleFiles = (e) => {
     const files = Array.from(e.target.files || []);
+    const input = e.target;
     if (!files.length) return;
     Promise.all(files.map(f => new Promise(res => {
       const r = new FileReader();
       r.onload = () => res({ id: Date.now() + '-' + Math.random(), url: r.result, name: f.name, ts: new Date().toISOString() });
       r.readAsDataURL(f);
     }))).then(newPhotos => {
-      onPhotosChange([...(photos || []), ...newPhotos]);
-      if (fileRef.current) fileRef.current.value = '';
+      addPhotos(newPhotos);
+      input.value = '';
     });
+  };
+
+  const handleTake = () => {
+    if (isCoarsePointer()) {
+      // Phones/tablets: the native camera app (focus, flash, HDR) beats an
+      // in-page preview every time.
+      takeRef.current?.click();
+    } else if (hasWebcamApi()) {
+      setCamera(true);
+    } else {
+      fileRef.current?.click();
+    }
   };
 
   const remove = (id) => onPhotosChange(photos.filter(p => p.id !== id));
   const accent = accentColor || t.accent;
+  const photoBtn = {
+    display: 'inline-flex', alignItems: 'center', gap: 4,
+    padding: '4px 10px', borderRadius: 999, border: 'none', cursor: 'pointer',
+    background: 'transparent',
+    color: accent, fontFamily: t.fontMono, fontSize: 11, fontWeight: 600, letterSpacing: 0.8,
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -38,27 +71,42 @@ export function PhotoNotes({ label, value = '', photos = [], onChange, onPhotosC
           <span style={{
             fontFamily: t.fontMono, fontSize: 12, fontWeight: 600, color: t.textMuted, letterSpacing: 1.2,
           }}>{label}</span>
-          <button onClick={() => fileRef.current?.click()} style={{
-            display: 'inline-flex', alignItems: 'center', gap: 4,
-            padding: '4px 10px', borderRadius: 999, border: 'none', cursor: 'pointer',
-            background: 'transparent',
-            color: accent, fontFamily: t.fontMono, fontSize: 11, fontWeight: 600, letterSpacing: 0.8,
-          }}>
-            <svg width="12" height="12" viewBox="0 0 20 20" fill="none">
-              <rect x="2.5" y="5" width="15" height="11" rx="2" stroke="currentColor" strokeWidth="1.6"/>
-              <circle cx="10" cy="10.5" r="3" stroke="currentColor" strokeWidth="1.6"/>
-              <path d="M7 5l1.5-2h3L13 5" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
-            </svg>
-            ADD PHOTO
-          </button>
-          {/* No `capture` attribute: mobile browsers then present a chooser
-              offering BOTH "Take Photo" (camera) and "Photo Library" (gallery).
-              Setting capture="environment" would force the camera and hide the
-              gallery option. */}
+          <span style={{ display: 'inline-flex', gap: 2 }}>
+            <button onClick={handleTake} style={photoBtn} title="Take a picture">
+              <svg width="12" height="12" viewBox="0 0 20 20" fill="none">
+                <rect x="2.5" y="5" width="15" height="11" rx="2" stroke="currentColor" strokeWidth="1.6"/>
+                <circle cx="10" cy="10.5" r="3" stroke="currentColor" strokeWidth="1.6"/>
+                <path d="M7 5l1.5-2h3L13 5" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
+              </svg>
+              TAKE
+            </button>
+            <button onClick={() => fileRef.current?.click()} style={photoBtn} title="Upload from library">
+              <svg width="12" height="12" viewBox="0 0 20 20" fill="none">
+                <path d="M10 13V4M6.5 7.5L10 4l3.5 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M3.5 13v2.5a1 1 0 001 1h11a1 1 0 001-1V13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+              </svg>
+              UPLOAD
+            </button>
+          </span>
+          {/* UPLOAD: no `capture` attr → mobile offers the photo library. */}
           <input ref={fileRef} type="file" accept="image/*" multiple
             onChange={handleFiles}
             style={{ display: 'none' }}/>
+          {/* TAKE (mobile): capture attr jumps straight into the camera. */}
+          <input ref={takeRef} type="file" accept="image/*" capture="environment"
+            onChange={handleFiles}
+            style={{ display: 'none' }}/>
         </div>
+      )}
+
+      {camera && (
+        <CameraModal
+          t={t}
+          onClose={() => setCamera(false)}
+          onCapture={(url) => addPhotos([{
+            id: Date.now() + '-' + Math.random(), url, name: 'camera.jpg', ts: new Date().toISOString(),
+          }])}
+        />
       )}
 
       <textarea
@@ -109,6 +157,82 @@ export function PhotoNotes({ label, value = '', photos = [], onChange, onPhotosC
             style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: 12 }}/>
         </div>
       )}
+    </div>
+  );
+}
+
+// Webcam capture modal (desktop). Mobile uses the native camera via the
+// capture-attribute input instead.
+function CameraModal({ t, onCapture, onClose }) {
+  const videoRef = useRefPN(null);
+  const streamRef = useRefPN(null);
+  const [error, setError] = useStatePN(null);
+  const [ready, setReady] = useStatePN(false);
+
+  useEffectPN(() => {
+    let cancelled = false;
+    navigator.mediaDevices
+      .getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1920 } }, audio: false })
+      .then((stream) => {
+        if (cancelled) {
+          stream.getTracks().forEach((tr) => tr.stop());
+          return;
+        }
+        streamRef.current = stream;
+        if (videoRef.current) videoRef.current.srcObject = stream;
+      })
+      .catch((err) => setError(err.name === 'NotAllowedError'
+        ? 'Camera permission denied — allow camera access in your browser, or use UPLOAD instead.'
+        : err.name === 'NotFoundError'
+          ? 'No camera found on this device — use UPLOAD instead.'
+          : err.message));
+    return () => {
+      cancelled = true;
+      streamRef.current?.getTracks().forEach((tr) => tr.stop());
+    };
+  }, []);
+
+  const shoot = () => {
+    const v = videoRef.current;
+    if (!v || !v.videoWidth) return;
+    const c = document.createElement('canvas');
+    c.width = v.videoWidth;
+    c.height = v.videoHeight;
+    c.getContext('2d').drawImage(v, 0, 0);
+    onCapture(c.toDataURL('image/jpeg', 0.9));
+    onClose();
+  };
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.94)',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24,
+    }}>
+      {error ? (
+        <div style={{
+          maxWidth: 420, textAlign: 'center', color: '#F2EFE6',
+          fontFamily: t.fontSans, fontSize: 14, lineHeight: 1.6,
+        }}>{error}</div>
+      ) : (
+        <video
+          ref={videoRef} autoPlay playsInline muted
+          onLoadedMetadata={() => setReady(true)}
+          style={{ maxWidth: '100%', maxHeight: '70vh', borderRadius: 14, background: '#000' }}/>
+      )}
+      <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+        {!error && (
+          <button onClick={shoot} disabled={!ready} aria-label="Take picture" style={{
+            width: 64, height: 64, borderRadius: 999, cursor: ready ? 'pointer' : 'wait',
+            background: t.accent, border: '4px solid rgba(255,255,255,0.85)',
+            opacity: ready ? 1 : 0.5,
+          }}/>
+        )}
+        <button onClick={onClose} style={{
+          padding: '10px 20px', borderRadius: 999, border: '1px solid rgba(255,255,255,0.3)',
+          background: 'transparent', color: '#F2EFE6', cursor: 'pointer',
+          fontFamily: t.fontMono, fontSize: 12, letterSpacing: 1,
+        }}>CANCEL</button>
+      </div>
     </div>
   );
 }
