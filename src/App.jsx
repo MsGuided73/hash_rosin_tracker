@@ -11,6 +11,7 @@ import { CureScreen } from './screens/CureScreen.jsx';
 import { SummaryScreen } from './screens/SummaryScreen.jsx';
 import { AnalyticsScreen } from './screens/AnalyticsScreen.jsx';
 import { scheduleSync } from './lib/sync.js';
+import { schedulePhotoBackup } from './lib/photo-backup.js';
 import { subscribeInstall, promptInstall, isIOSSafari } from './lib/pwa-install.js';
 
 const { useState: useStateA, useEffect: useEffectA, useMemo: useMemoA } = React;
@@ -41,8 +42,9 @@ export function MicronApp() {
   useEffectA(() => { localStorage.setItem('micron-route', JSON.stringify(route)); }, [route]);
   useEffectA(() => { localStorage.setItem('micron-batches', JSON.stringify(batches)); }, [batches]);
   // Auto-save: every batch change is pushed to the shared database (debounced,
-  // demo batches excluded, retries silently when offline).
-  useEffectA(() => { scheduleSync(batches); }, [batches]);
+  // demo batches excluded, retries silently when offline). Photos ride along —
+  // compressed and backed up to Supabase Storage.
+  useEffectA(() => { scheduleSync(batches); schedulePhotoBackup(batches); }, [batches]);
   useEffectA(() => { window.__onTweak = () => setTweaksOpen(true); }, []);
 
   // Tweaks bridge
