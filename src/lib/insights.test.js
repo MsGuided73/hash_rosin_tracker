@@ -2,9 +2,10 @@ import { describe, expect, test } from 'vitest';
 import { computeInsights } from './insights.js';
 import { MicronSeed } from './data.js';
 
-// Use the seed batches as realistic fixtures, but strip the demo flag so the
-// engine treats them as real production data.
-const realBatches = () => MicronSeed.batches().map(({ demo: _demo, ...b }) => b);
+// Use the seed batches as realistic fixtures, but strip the demo flag AND
+// re-id them (the engine also excludes known seed batch ids).
+const realBatches = () =>
+  MicronSeed.batches().map(({ demo: _demo, ...b }) => ({ ...b, id: b.id.replace('B-', 'R-') }));
 
 describe('computeInsights', () => {
   test('returns onboarding guidance when there is no real data', () => {

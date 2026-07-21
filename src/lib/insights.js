@@ -12,13 +12,15 @@
 //   milestone — progress marker
 import { deriveBatch } from './analytics.js';
 import { getSupabase, ensureSession } from './supabase.js';
+import { isDemoBatch } from './sync.js';
 
 const num = (v) => (v == null || v === '' || Number.isNaN(Number(v)) ? null : Number(v));
 const avg = (a) => (a.length ? a.reduce((s, v) => s + v, 0) / a.length : null);
 const fmtPct = (v) => `${v.toFixed(1)}%`;
 
 export function computeInsights(batches) {
-  const real = batches.filter((b) => !b.demo).map(deriveBatch);
+  // isDemoBatch also catches seed batches from pre-flag localStorage
+  const real = batches.filter((b) => !isDemoBatch(b)).map(deriveBatch);
   const done = real
     .filter((b) => b.stage === 'done')
     .sort((a, b) => new Date(a.pressDate || a.startedAt) - new Date(b.pressDate || b.startedAt));

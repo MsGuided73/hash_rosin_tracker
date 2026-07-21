@@ -5,6 +5,7 @@ import React from 'react';
 import { computeInsights, recordInsights } from '../lib/insights.js';
 import { getSupabase, ensureSession, fetchOwnProfile } from '../lib/supabase.js';
 import { deriveBatch } from '../lib/analytics.js';
+import { isDemoBatch } from '../lib/sync.js';
 import { InfoTip } from './InfoTip.jsx';
 
 const { useState, useEffect, useMemo } = React;
@@ -403,7 +404,7 @@ function AiButton({ t, onClick, children, style }) {
 
 // Compact, anonymized-enough summary of the user's own data for the AI.
 function buildAiSummary(batches) {
-  const real = batches.filter((b) => !b.demo).map(deriveBatch);
+  const real = batches.filter((b) => !isDemoBatch(b)).map(deriveBatch);
   return {
     generated_at: new Date().toISOString(),
     batch_count: real.length,
