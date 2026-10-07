@@ -13,6 +13,7 @@ import { AnalyticsScreen } from './screens/AnalyticsScreen.jsx';
 import { scheduleSync } from './lib/sync.js';
 import { schedulePhotoBackup } from './lib/photo-backup.js';
 import { subscribeInstall, promptInstall, isIOSSafari } from './lib/pwa-install.js';
+import { AgentAccess } from './components/AgentAccess.jsx';
 
 const { useState: useStateA, useEffect: useEffectA, useMemo: useMemoA } = React;
 
@@ -208,6 +209,7 @@ function TweaksPanel({ open, onClose, theme, setTheme, unit, setUnit, tempUnit, 
             options={[{ value: 'F', label: '°F' }, { value: 'C', label: '°C' }]}
             value={tempUnit} onChange={setTempUnit}/>
         </TweakRow>
+        <AgentAccess theme={theme} />
         {installable && (
           <Btn fullWidth style={{ marginTop: 20 }} onClick={() => promptInstall()}>
             Install Hashashin on this device
